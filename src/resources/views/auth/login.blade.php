@@ -24,10 +24,10 @@
             <p class="text-sm text-center text-muted">Belum punya akun? <a href="{{ route('register') }}" class="text-primary font-semibold">Daftar</a></p>
         </form>
 
-        <div class="card mt-4 text-xs text-muted">
+        <!-- <div class="card mt-4 text-xs text-muted">
             <p class="font-semibold mb-1">Akun demo:</p>
             <p>admin@masjid.test / staff@masjid.test / user@masjid.test</p>
             <p>Password: <span class="font-mono">password</span></p>
-        </div>
+        </div> -->
     </div>
 @endsection

@@ -11,7 +11,10 @@
             <div class="space-y-2">
                 @foreach($qurbanAccounts as $acc)
                     <div class="text-sm border-b last:border-0 pb-2 last:pb-0">
-                        <div class="font-semibold">{{ $acc->bank_name }} — <span class="font-mono">{{ $acc->account_number }}</span></div>
+                        <div class="font-semibold">
+                            {{ $acc->bank_name }} —
+                            <button onclick="copyToClipboard('{{ $acc->account_number }}', this)" class="font-mono font-bold text-primary">{{ $acc->account_number }} 📋</button>
+                        </div>
                         <div class="text-muted">a.n. {{ $acc->account_name }} <span class="text-xs">({{ $acc->label }})</span></div>
                     </div>
                 @endforeach
