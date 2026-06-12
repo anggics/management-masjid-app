@@ -58,6 +58,11 @@ COPY docker/php/entrypoint.production.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh \
     && mkdir -p /etc/nginx/templates \
     && rm -f /etc/nginx/http.d/*.conf \
+    # nginx jalan sebagai www-data — direktori temp & runtime-nya harus writable.
+    && mkdir -p /var/lib/nginx/tmp/client_body /var/lib/nginx/tmp/proxy \
+                /var/lib/nginx/tmp/fastcgi /var/lib/nginx/tmp/uwsgi \
+                /var/lib/nginx/tmp/scgi /var/log/nginx /run \
+    && chown -R www-data:www-data /var/lib/nginx /var/log/nginx \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && php artisan storage:link || true
 
