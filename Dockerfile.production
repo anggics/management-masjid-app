@@ -46,14 +46,18 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && npm cache clean --force \
     && rm -rf node_modules
 
-# 5) Konfigurasi nginx, supervisor, php, entrypoint
-COPY docker/nginx/production.conf /etc/nginx/http.d/default.conf
+# 5) Konfigurasi nginx, supervisor, php, entrypoint.
+#    nginx config disimpan sebagai TEMPLATE; entrypoint me-render ${PORT} ke
+#    /etc/nginx/http.d/default.conf saat start (Railway inject $PORT dinamis).
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/nginx/production.conf /etc/nginx/templates/default.conf.template
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/zz-masjid.ini
 COPY docker/php/entrypoint.production.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh \
-    && rm -f /etc/nginx/http.d/default.conf.bak \
+    && mkdir -p /etc/nginx/templates \
+    && rm -f /etc/nginx/http.d/*.conf \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && php artisan storage:link || true
 

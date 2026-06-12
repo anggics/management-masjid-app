@@ -6,8 +6,11 @@ cd /var/www
 # --- Render konfigurasi nginx dengan $PORT (Railway inject port dinamis) ---
 : "${PORT:=8080}"
 echo "[entrypoint] Render nginx config untuk PORT=$PORT..."
-envsubst '${PORT}' < /etc/nginx/http.d/default.conf > /tmp/default.conf
-cp /tmp/default.conf /etc/nginx/http.d/default.conf
+# Render ke file template terpisah lalu tulis sebagai SATU-SATUNYA server config.
+# Hapus default bawaan Alpine agar tidak ada server lain yang listen di :80.
+rm -f /etc/nginx/http.d/*.conf
+envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/http.d/default.conf
+echo "[entrypoint] nginx akan listen di: $(grep -m1 listen /etc/nginx/http.d/default.conf | tr -s ' ')"
 
 # --- APP_KEY: di Railway diisi via env var. Jika kosong, generate sementara
 #     (in-memory) agar aplikasi tidak crash. Disarankan set APP_KEY tetap di
