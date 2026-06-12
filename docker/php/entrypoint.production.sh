@@ -45,7 +45,10 @@ echo "[entrypoint] MySQL siap."
 echo "[entrypoint] Menjalankan migrasi..."
 php artisan migrate --force
 
+# Volume Railway di-mount ke storage/app/public — pastikan ada & writable.
+mkdir -p storage/app/public
 php artisan storage:link --force 2>/dev/null || true
+chown -R www-data:www-data storage/app/public || true
 
 echo "[entrypoint] Optimasi cache produksi..."
 php artisan optimize:clear || true
