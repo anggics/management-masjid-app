@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------
+# Aplikasi PWA Masjid & Mushola — IMAGE PRODUCTION (Railway)
+# Single container: nginx + php-fpm + supervisor. Listen di $PORT (Railway).
+# Pola sama seperti Dockerfile dev: skeleton Laravel dibuat saat build lalu
+# di-overlay dengan kode kustom ./src. TIDAK mengubah file dev yang ada.
+# ---------------------------------------------------------------------------
+FROM php:8.2-fpm-alpine
+
+# --- System & PHP extensions ---
+RUN apk add --no-cache \
+        git curl bash zip unzip \
+        libpng-dev libjpeg-turbo-dev freetype-dev \
+        oniguruma-dev icu-dev libzip-dev \
+        nodejs npm mysql-client \
+        nginx supervisor gettext \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) pdo pdo_mysql gd exif opcache bcmath intl zip pcntl mbstring \
+    && apk add --no-cache --virtual .build-deps autoconf g++ make \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
+
+# --- Composer (pin 2.7 — sama seperti build dev) ---
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+WORKDIR /var/www
+
+# 1) Skeleton Laravel 11 bersih.
+RUN rm -rf /var/www/html \
+    && composer create-project "laravel/laravel:^11.0" /usr/src/laravel --no-interaction --prefer-dist \
+    && cp -a /usr/src/laravel/. /var/www/ \
+    && rm -rf /usr/src/laravel
+
+# 2) Paket tambahan sesuai System Design
+RUN composer require laravel/sanctum barryvdh/laravel-dompdf --no-interaction \
+    && php artisan install:api --no-interaction || true
+
+# 3) Overlay kode aplikasi kustom (menimpa file skeleton)
+COPY src/ /var/www/
+
+# 4) Dependensi & build aset frontend, lalu optimasi autoload untuk produksi.
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && npm install \
+    && npm run build \
+    && npm cache clean --force \
+    && rm -rf node_modules
+
+# 5) Konfigurasi nginx, supervisor, php, entrypoint
+COPY docker/nginx/production.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/zz-masjid.ini
+COPY docker/php/entrypoint.production.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+    && rm -f /etc/nginx/http.d/default.conf.bak \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && php artisan storage:link || true
+
+# Railway meng-inject $PORT; default 8080 untuk run lokal image production.
+ENV PORT=8080
+EXPOSE 8080
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

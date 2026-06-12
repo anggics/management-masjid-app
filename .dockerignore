@@ -1,0 +1,14 @@
+.git
+.gitignore
+docker-compose.yml
+README.md
+**/node_modules
+**/vendor
+# Env lokal — JANGAN masuk image. Di Railway diisi via Environment Variables.
+src/.env
+src/.env.*
+.env
+# Build artifacts & misc lokal
+src/public/build
+src/storage/app/public/*
+image.png

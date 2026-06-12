@@ -1,0 +1,158 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: masjid_app
+    container_name: masjid_app
+    restart: unless-stopped
+    environment:
+      CONTAINER_ROLE: app
+    env_file:
+      - ./src/.env
+    volumes:
+      # Bind mount HANYA folder overlay yang ada di ./src (bukan seluruh /var/www).
+      # File inti Laravel (artisan, composer.*, vendor) dibuat di image dan TIDAK
+      # ada di ./src, jadi tidak boleh ditimpa. Dengan ini ubah kode di host
+      # langsung kebaca container tanpa rebuild & tanpa menghapus volume (DB aman).
+      - ./src/app:/var/www/app
+      - ./src/bootstrap/app.php:/var/www/bootstrap/app.php
+      - ./src/bootstrap/providers.php:/var/www/bootstrap/providers.php
+      - ./src/config:/var/www/config
+      - ./src/database:/var/www/database
+      - ./src/resources:/var/www/resources
+      - ./src/routes:/var/www/routes
+      # public/ berisi index.php & build (dari image) + file statik editable.
+      # Named volume diisi entrypoint dari image, lalu file editable di-overlay.
+      - app_public:/var/www/public
+      - ./src/public/icons:/var/www/public/icons
+      - ./src/public/manifest.webmanifest:/var/www/public/manifest.webmanifest
+      - ./src/public/offline.html:/var/www/public/offline.html
+      - ./src/public/sw.js:/var/www/public/sw.js
+      - ./src/.env:/var/www/.env
+      - storage_public:/var/www/storage/app/public
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/app-ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+      start_period: 90s
+    networks:
+      - masjid
+
+  nginx:
+    image: nginx:alpine
+    container_name: masjid_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # nginx hanya butuh document root public/ (index.php, build, file statik).
+      - app_public:/var/www/public:ro
+      - ./src/public/icons:/var/www/public/icons:ro
+      - ./src/public/manifest.webmanifest:/var/www/public/manifest.webmanifest:ro
+      - ./src/public/offline.html:/var/www/public/offline.html:ro
+      - ./src/public/sw.js:/var/www/public/sw.js:ro
+      - storage_public:/var/www/storage/app/public:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - masjid
+
+  queue:
+    image: masjid_app
+    container_name: masjid_queue
+    restart: unless-stopped
+    command: php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+    environment:
+      CONTAINER_ROLE: queue
+    env_file:
+      - ./src/.env
+    volumes:
+      - ./src/app:/var/www/app
+      - ./src/bootstrap/app.php:/var/www/bootstrap/app.php
+      - ./src/bootstrap/providers.php:/var/www/bootstrap/providers.php
+      - ./src/config:/var/www/config
+      - ./src/database:/var/www/database
+      - ./src/resources:/var/www/resources
+      - ./src/routes:/var/www/routes
+      - ./src/.env:/var/www/.env
+      - storage_public:/var/www/storage/app/public
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - masjid
+
+  scheduler:
+    image: masjid_app
+    container_name: masjid_scheduler
+    restart: unless-stopped
+    command: sh -c "while true; do php artisan schedule:run --no-interaction; sleep 60; done"
+    environment:
+      CONTAINER_ROLE: scheduler
+    env_file:
+      - ./src/.env
+    volumes:
+      - ./src/app:/var/www/app
+      - ./src/bootstrap/app.php:/var/www/bootstrap/app.php
+      - ./src/bootstrap/providers.php:/var/www/bootstrap/providers.php
+      - ./src/config:/var/www/config
+      - ./src/database:/var/www/database
+      - ./src/resources:/var/www/resources
+      - ./src/routes:/var/www/routes
+      - ./src/.env:/var/www/.env
+      - storage_public:/var/www/storage/app/public
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - masjid
+
+  mysql:
+    image: mysql:8.0
+    container_name: masjid_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-masjid_pwa}
+      MYSQL_USER: ${DB_USERNAME:-masjid}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "33060:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - masjid
+
+  redis:
+    image: redis:7-alpine
+    container_name: masjid_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - masjid
+
+volumes:
+  mysql_data:
+  redis_data:
+  app_public:
+  storage_public:
+
+networks:
+  masjid:
+    driver: bridge
