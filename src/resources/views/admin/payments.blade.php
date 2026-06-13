@@ -84,7 +84,7 @@
                     </div>
 
                     <div x-show="edit" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" @click.self="edit = false">
-                        <form method="POST" action="{{ route('admin.payments.update', $m) }}" enctype="multipart/form-data" class="bg-white rounded-xl p-5 w-full max-w-md space-y-3 text-left max-h-[90vh] overflow-y-auto">
+                        <form method="POST" action="{{ route('admin.payments.update', $m) }}" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-xl p-5 w-full max-w-md space-y-3 text-left max-h-[90vh] overflow-y-auto">
                             @csrf @method('PUT')
                             <h3 class="font-bold">Edit Metode Pembayaran</h3>
                             <div>
@@ -126,7 +126,11 @@
                     </div>
                 </div>
             @empty
-                <p class="text-muted">Belum ada metode pembayaran.</p>
+                <div class="empty-state">
+                    <span class="empty-state-icon">💳</span>
+                    <p class="font-semibold text-ink">Belum ada metode pembayaran</p>
+                    <p class="text-sm">Tambahkan QRIS, transfer bank, atau rekening qurban.</p>
+                </div>
             @endforelse
         </div>
     </div>

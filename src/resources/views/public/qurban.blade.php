@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="flex items-center justify-between mb-3">
-        <h1 class="text-xl font-bold">Peserta Qurban</h1>
+        <h1 class="page-title">Peserta Qurban</h1>
         @auth
             <a href="{{ route('user.qurban') }}" class="btn-primary px-4 py-2 text-sm">Tabungan Saya</a>
         @else
@@ -31,7 +31,11 @@
             </div>
         </div>
     @empty
-        <p class="text-muted">Belum ada peserta qurban.</p>
+        <div class="empty-state">
+            <span class="empty-state-icon">🐐</span>
+            <p class="font-semibold text-ink">Belum ada peserta qurban</p>
+            <p class="text-sm">Jadilah yang pertama mendaftar tabungan qurban.</p>
+        </div>
     @endforelse
 
     <div class="mt-3">{{ $participants->links() }}</div>

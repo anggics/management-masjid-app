@@ -2,7 +2,7 @@
 @section('title', $study->title)
 
 @section('content')
-    <a href="{{ route('study.public') }}" class="text-sm text-accent font-semibold">← Kembali</a>
+    <a href="{{ route('study.public') }}" class="inline-flex items-center gap-1 text-sm text-accent font-semibold hover:underline">← Kembali</a>
 
     <div class="card mt-3">
         @if($study->poster_url)

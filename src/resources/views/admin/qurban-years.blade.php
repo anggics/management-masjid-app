@@ -19,8 +19,8 @@
     </details>
 
     <div class="card overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead><tr class="text-left text-muted border-b"><th class="py-2">Tahun Hijriah</th><th>Status</th><th></th></tr></thead>
+        <table class="table-admin">
+            <thead><tr><th class="py-2">Tahun Hijriah</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @forelse($years as $y)
                     <tr class="border-b last:border-0">

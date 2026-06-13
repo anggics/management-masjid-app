@@ -44,7 +44,7 @@
                 <form method="POST" action="{{ route('admin.study.destroy', $k) }}" class="inline" onsubmit="return confirm('Hapus kajian ini?')">@csrf @method('DELETE')<button class="text-red-600">Hapus</button></form>
 
                 <div x-show="edit" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" @click.self="edit = false">
-                    <form method="POST" action="{{ route('admin.study.update', $k) }}" enctype="multipart/form-data" class="bg-white rounded-xl p-5 w-full max-w-lg space-y-3 text-left max-h-[90vh] overflow-y-auto">
+                    <form method="POST" action="{{ route('admin.study.update', $k) }}" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-xl p-5 w-full max-w-lg space-y-3 text-left max-h-[90vh] overflow-y-auto">
                         @csrf @method('PUT')
                         <h3 class="font-bold">Edit Kajian</h3>
                         <div><label class="label">Judul</label><input name="title" class="input" value="{{ $k->title }}" required></div>
@@ -75,7 +75,11 @@
             </div>
         </div>
     @empty
-        <p class="text-muted">Belum ada kajian.</p>
+        <div class="empty-state">
+            <span class="empty-state-icon">📚</span>
+            <p class="font-semibold text-ink">Belum ada kajian</p>
+            <p class="text-sm">Tambahkan jadwal kajian melalui form di atas.</p>
+        </div>
     @endforelse
     <div class="mt-3">{{ $schedules->links() }}</div>
 @endsection

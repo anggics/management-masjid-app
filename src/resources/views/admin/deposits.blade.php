@@ -30,7 +30,11 @@
             </div>
         </div>
     @empty
-        <div class="card text-center text-muted">Tidak ada setoran menunggu verifikasi. 🎉</div>
+        <div class="empty-state">
+            <span class="empty-state-icon">🎉</span>
+            <p class="font-semibold text-ink">Semua beres</p>
+            <p class="text-sm">Tidak ada setoran menunggu verifikasi.</p>
+        </div>
     @endforelse
 
     <div class="mt-3">{{ $pending->links() }}</div>

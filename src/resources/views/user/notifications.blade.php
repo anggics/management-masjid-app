@@ -2,10 +2,10 @@
 @section('title', 'Notifikasi')
 
 @section('content')
-    <h1 class="text-xl font-bold mb-3">Notifikasi</h1>
+    <h1 class="page-title mb-3">Notifikasi</h1>
 
     @forelse($notifications as $n)
-        <div class="card mb-3 {{ $n->read_at ? 'opacity-70' : '' }}">
+        <div class="card mb-3 {{ $n->read_at ? 'opacity-70' : 'border-l-4 border-l-primary' }}">
             <div class="flex justify-between items-start gap-3">
                 <div>
                     <div class="font-semibold">{{ $n->title }}</div>
@@ -20,7 +20,11 @@
             </div>
         </div>
     @empty
-        <p class="text-muted">Belum ada notifikasi.</p>
+        <div class="empty-state">
+            <span class="empty-state-icon">🔔</span>
+            <p class="font-semibold text-ink">Belum ada notifikasi</p>
+            <p class="text-sm">Pemberitahuan akan muncul di sini.</p>
+        </div>
     @endforelse
 
     <div class="mt-3">{{ $notifications->links() }}</div>

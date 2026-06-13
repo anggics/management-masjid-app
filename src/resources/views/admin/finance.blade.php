@@ -40,8 +40,8 @@
     </details>
 
     <div class="card overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead><tr class="text-left text-muted border-b"><th class="py-2">Tanggal</th><th>Kategori</th><th>Tipe</th><th class="text-right">Jumlah</th>@if(auth()->user()->isAdmin())<th></th>@endif</tr></thead>
+        <table class="table-admin">
+            <thead><tr><th class="py-2">Tanggal</th><th>Kategori</th><th>Tipe</th><th class="text-right">Jumlah</th>@if(auth()->user()->isAdmin())<th></th>@endif</tr></thead>
             <tbody>
                 @forelse($records as $r)
                     <tr class="border-b last:border-0" x-data="{ edit: false }">
@@ -55,7 +55,7 @@
                                 <form method="POST" action="{{ route('admin.finance.destroy', $r) }}" class="inline" onsubmit="return confirm('Hapus catatan ini?')">@csrf @method('DELETE')<button class="text-red-600">Hapus</button></form>
 
                                 <div x-show="edit" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" @click.self="edit = false">
-                                    <form method="POST" action="{{ route('admin.finance.update', $r) }}" class="bg-white rounded-xl p-5 w-full max-w-md space-y-3 text-left">
+                                    <form method="POST" action="{{ route('admin.finance.update', $r) }}" class="bg-white rounded-2xl shadow-xl p-5 w-full max-w-md space-y-3 text-left">
                                         @csrf @method('PUT')
                                         <h3 class="font-bold">Edit Catatan Keuangan</h3>
                                         <div>

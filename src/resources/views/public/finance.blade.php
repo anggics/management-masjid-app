@@ -2,13 +2,13 @@
 @section('title', 'Laporan Keuangan')
 
 @section('content')
-    <h1 class="text-xl font-bold mb-1">Laporan Keuangan</h1>
-    <p class="text-muted text-sm mb-4">Transparansi kas {{ $mosque->name }}.</p>
+    <h1 class="page-title mb-1">Laporan Keuangan</h1>
+    <p class="page-subtitle mb-4">Transparansi kas {{ $mosque->name }}.</p>
 
     {{-- Saldo kas keseluruhan (semua waktu, tanpa filter periode) --}}
-    <div class="card mb-4 bg-primary text-white text-center">
+    <div class="card mb-4 bg-gradient-to-br from-primary to-primary-light text-white border-0 text-center">
         <div class="text-xs opacity-80">Saldo Kas Keseluruhan</div>
-        <div class="text-2xl font-bold">Rp {{ number_format($totalBalance,0,',','.') }}</div>
+        <div class="text-3xl font-bold">Rp {{ number_format($totalBalance,0,',','.') }}</div>
         <div class="text-xs opacity-80">Total seluruh pemasukan dikurangi pengeluaran</div>
     </div>
 

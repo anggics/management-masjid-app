@@ -2,7 +2,7 @@
 @section('title', 'Tabungan Qurban ' . $user->name)
 
 @section('content')
-    <h1 class="text-xl font-bold mb-3">Tabungan Qurban {{ $user->name }}</h1>
+    <h1 class="page-title mb-3">Tabungan Qurban {{ $user->name }}</h1>
 
     {{-- Nomor rekening qurban (dari metode pembayaran tipe rekening qurban) --}}
     @if($qurbanAccounts->isNotEmpty())
@@ -126,6 +126,10 @@
             @endif
         </div>
     @empty
-        <p class="text-muted">Anda belum memiliki tabungan qurban. Daftar di atas untuk memulai.</p>
+        <div class="empty-state">
+            <span class="empty-state-icon">🐐</span>
+            <p class="font-semibold text-ink">Belum ada tabungan qurban</p>
+            <p class="text-sm">Daftar peserta di atas untuk memulai tabungan Anda.</p>
+        </div>
     @endforelse
 @endsection

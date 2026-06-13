@@ -6,18 +6,35 @@
 
 [x-cloak] { display: none !important; }
 
+/* PWA safe-area: hormati notch / home-indicator agar konten tidak kepotong */
+:root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@layer utilities {
+    .pt-safe { padding-top: var(--safe-top); }
+    .pb-safe { padding-bottom: var(--safe-bottom); }
+    .pl-safe { padding-left: var(--safe-left); }
+    .pr-safe { padding-right: var(--safe-right); }
+    /* tinggi bottom-nav (3.75rem) + safe area bawah, untuk padding konten utama */
+    .pb-nav { padding-bottom: calc(3.75rem + var(--safe-bottom)); }
+}
+
 @layer components {
     .btn-primary {
-        @apply inline-flex items-center justify-center bg-primary text-white rounded-xl px-6 py-3 font-semibold hover:bg-primary-light transition;
+        @apply inline-flex items-center justify-center bg-primary text-white rounded-xl px-6 py-3 font-semibold shadow-sm hover:bg-primary-light hover:shadow active:scale-[.98] transition;
     }
     .btn-secondary {
-        @apply inline-flex items-center justify-center border-2 border-primary text-primary rounded-xl px-6 py-3 font-semibold hover:bg-surface transition;
+        @apply inline-flex items-center justify-center border-2 border-primary text-primary rounded-xl px-6 py-3 font-semibold hover:bg-surface active:scale-[.98] transition;
     }
     .btn-danger {
-        @apply inline-flex items-center justify-center bg-red-600 text-white rounded-xl px-6 py-3 font-semibold hover:bg-red-700 transition;
+        @apply inline-flex items-center justify-center bg-red-600 text-white rounded-xl px-6 py-3 font-semibold shadow-sm hover:bg-red-700 active:scale-[.98] transition;
     }
     .card {
-        @apply bg-white rounded-2xl shadow-sm border border-emerald-100 p-5;
+        @apply bg-white rounded-2xl shadow-sm border border-emerald-100/70 p-5 transition-shadow;
     }
     .badge-pending {
         @apply bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full;
@@ -39,5 +56,39 @@
     }
     .alert-error {
         @apply bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg text-red-800;
+    }
+    /* Judul halaman konsisten */
+    .page-title {
+        @apply text-xl font-bold text-ink;
+    }
+    .page-subtitle {
+        @apply text-muted text-sm;
+    }
+    /* Empty state ramah: kartu tengah dengan ikon */
+    .empty-state {
+        @apply card flex flex-col items-center justify-center text-center text-muted py-10 gap-2;
+    }
+    .empty-state-icon {
+        @apply w-14 h-14 rounded-full bg-surface-2 flex items-center justify-center text-2xl;
+    }
+    /* Segmented control (pill filter) */
+    .pill {
+        @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition active:scale-[.98];
+    }
+    .pill-active {
+        @apply bg-primary text-white shadow-sm;
+    }
+    .pill-idle {
+        @apply bg-white text-primary border border-emerald-100;
+    }
+    /* Tabel admin: header rapi + baris hover */
+    .table-admin {
+        @apply w-full text-sm;
+    }
+    .table-admin thead tr {
+        @apply text-left text-muted border-b border-emerald-100 uppercase tracking-wide text-xs;
+    }
+    .table-admin tbody tr {
+        @apply border-b border-emerald-50 last:border-0 hover:bg-surface/60 transition-colors;
     }
 }

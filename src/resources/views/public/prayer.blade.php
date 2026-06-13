@@ -2,8 +2,8 @@
 @section('title', 'Jadwal Sholat')
 
 @section('content')
-    <h1 class="text-xl font-bold mb-1">Jadwal Sholat</h1>
-    <p class="text-muted text-sm mb-4">{{ $mosque->city }} • Metode {{ $mosque->prayer_method }}</p>
+    <h1 class="page-title mb-1">Jadwal Sholat</h1>
+    <p class="page-subtitle mb-4">{{ $mosque->city }} • Metode {{ $mosque->prayer_method }}</p>
 
     <div class="card mb-4">
         <div class="flex items-center justify-between mb-3">

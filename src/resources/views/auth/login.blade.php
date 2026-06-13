@@ -3,8 +3,15 @@
 
 @section('content')
     <div class="max-w-sm mx-auto">
-        <h1 class="text-2xl font-bold mb-1">Masuk</h1>
-        <p class="text-muted text-sm mb-5">Masuk untuk mengikuti tabungan qurban.</p>
+        <div class="flex flex-col items-center text-center mb-5">
+            @if(($mosque ?? null) && $mosque->logo_url)
+                <img src="{{ $mosque->logo_url }}" alt="Logo" class="w-16 h-16 rounded-full object-cover shadow-sm mb-3">
+            @else
+                <span class="w-16 h-16 rounded-full bg-primary text-gold flex items-center justify-center text-3xl shadow-sm mb-3">☪</span>
+            @endif
+            <h1 class="text-2xl font-bold">Masuk</h1>
+            <p class="text-muted text-sm">Masuk untuk mengikuti tabungan qurban.</p>
+        </div>
 
         <form method="POST" action="{{ route('login') }}" class="card space-y-4">
             @csrf

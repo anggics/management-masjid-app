@@ -2,8 +2,8 @@
 @section('title', 'Sedekah Jumat')
 
 @section('content')
-    <h1 class="text-xl font-bold mb-1">Sedekah Jumat Digital</h1>
-    <p class="text-muted text-sm mb-4">Tunaikan sedekah Anda melalui QRIS atau transfer bank. Tanpa perlu login.</p>
+    <h1 class="page-title mb-1">Sedekah Jumat Digital</h1>
+    <p class="page-subtitle mb-4">Tunaikan sedekah Anda melalui QRIS atau transfer bank. Tanpa perlu login.</p>
 
     @forelse($methods as $m)
         <div class="card mb-4">
@@ -30,6 +30,10 @@
             @endif
         </div>
     @empty
-        <p class="text-muted">Metode pembayaran belum tersedia.</p>
+        <div class="empty-state">
+            <span class="empty-state-icon">💚</span>
+            <p class="font-semibold text-ink">Belum tersedia</p>
+            <p class="text-sm">Metode pembayaran sedekah belum diatur pengurus.</p>
+        </div>
     @endforelse
 @endsection

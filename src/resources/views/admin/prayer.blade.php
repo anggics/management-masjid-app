@@ -15,8 +15,8 @@
     </form>
 
     <div class="card overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead><tr class="text-left text-muted border-b"><th class="py-2">Tanggal</th><th>Subuh</th><th>Dzuhur</th><th>Ashar</th><th>Maghrib</th><th>Isya</th><th></th></tr></thead>
+        <table class="table-admin">
+            <thead><tr><th class="py-2">Tanggal</th><th>Subuh</th><th>Dzuhur</th><th>Ashar</th><th>Maghrib</th><th>Isya</th><th></th></tr></thead>
             <tbody>
                 @forelse($overrides as $o)
                     <tr class="border-b last:border-0">

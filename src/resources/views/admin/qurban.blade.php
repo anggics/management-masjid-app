@@ -62,11 +62,11 @@
     </form>
 
     <div class="card overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead><tr class="text-left text-muted border-b"><th class="py-2">Nama</th><th>No. WhatsApp</th><th>Jenis</th><th>Tahun</th><th>Terkumpul</th><th>Target</th><th>Status</th><th></th></tr></thead>
+        <table class="table-admin">
+            <thead><tr><th class="py-2">Nama</th><th>No. WhatsApp</th><th>Jenis</th><th>Tahun</th><th>Terkumpul</th><th>Target</th><th>Status</th><th></th></tr></thead>
             <tbody>
                 @forelse($participants as $p)
-                    <tr class="border-b last:border-0" x-data="{ edit: false }">
+                    <tr x-data="{ edit: false }">
                         <td class="py-2 font-semibold">{{ $p->name }}</td>
                         <td>{{ $p->user?->whatsapp ?: '—' }}</td>
                         <td class="capitalize">{{ $p->qurbanType?->label() ?? $p->animal_type }}</td>
@@ -80,7 +80,7 @@
 
                             {{-- Modal edit --}}
                             <div x-show="edit" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" @click.self="edit = false">
-                                <form method="POST" action="{{ route('admin.qurban.update', $p) }}" class="bg-white rounded-xl p-5 w-full max-w-md space-y-3 text-left">
+                                <form method="POST" action="{{ route('admin.qurban.update', $p) }}" class="bg-white rounded-2xl shadow-xl p-5 w-full max-w-md space-y-3 text-left">
                                     @csrf @method('PUT')
                                     <h3 class="font-bold">Edit Data Qurban</h3>
                                     <div><label class="label">Nama</label><input name="name" class="input" value="{{ $p->name }}" required></div>
